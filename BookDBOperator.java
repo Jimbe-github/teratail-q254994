@@ -7,9 +7,10 @@ class BookDBOperator {
   private static String URL = "jdbc:mysql://localhost:3306/q254994?characterEncoding=utf8&useSSL=false&serverTimezone=GMT%2B9:00&rewriteBatchedStatements=true";
   private static String USER = "root";
   private static String PASS = "root";
-  private static String TABLE = "tbl_book";
+
   private enum tbl_book {
-    No, title, author, publisher, ISBN, releaseday, status;
+    No, title, author, publisher, ISBN, releaseday, status; //列名
+    static String table = tbl_book.class.getName(); //テーブル名
   };
 
   BookDBOperator() throws ClassNotFoundException {
@@ -19,8 +20,8 @@ class BookDBOperator {
   private static final String SELECT =
       "select " + tbl_book.No + "," + tbl_book.title + "," + tbl_book.author + "," + tbl_book.publisher + "," +
           tbl_book.ISBN + "," + tbl_book.releaseday + "," + tbl_book.status +
-      " from " + TABLE +
-      " order by No";
+      " from " + tbl_book.table +
+      " order by " + tbl_book.No;
 
   void loadAllBooks(BookTableModel tableModel) throws SQLException {
     try(Connection con = getConnection();
@@ -42,7 +43,7 @@ class BookDBOperator {
   }
 
   private static final String INSERT =
-      "insert into " + TABLE +
+      "insert into " + tbl_book.table +
       " (" + tbl_book.title + "," + tbl_book.author + "," + tbl_book.publisher + "," +
             tbl_book.ISBN + "," + tbl_book.releaseday + "," + tbl_book.status +
       ") values (?, ?, ?, ?, ?, ?)";
@@ -64,9 +65,9 @@ class BookDBOperator {
   }
 
   private static final String UPDATE =
-      "update " + TABLE +
+      "update " + tbl_book.table +
       " set " + tbl_book.status + "=?" +
-      " where no=?";
+      " where " + tbl_book.No + "=?";
 
   int updateStatus(int no, BookStatus status) throws SQLException {
     try(Connection con = getConnection();
